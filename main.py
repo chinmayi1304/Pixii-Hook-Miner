@@ -6,7 +6,7 @@ Google Gemini to mine viral hook architectures for any niche.
 
 Architecture:
   - Tavily Python SDK  → multi-query batch search for high-density signals
-  - google-generativeai → Gemini 1.5 Flash for pattern extraction & content gen
+  - google-genai        → Gemini 2.5 Flash for pattern extraction & content gen
   - Streamlit           → dark-mode dashboard UI with live status animation
 
 Environment variables required:
@@ -23,7 +23,8 @@ from datetime import datetime
 
 import streamlit as st
 from tavily import TavilyClient
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # ---------------------------------------------------------------------------
 # Page configuration — must be the very first Streamlit call
@@ -229,7 +230,8 @@ if not GEMINI_API_KEY or not TAVILY_API_KEY:
     )
     st.stop()
 
-genai.configure(api_key=GEMINI_API_KEY)
+# Initialise the new google-genai client (2026 SDK)
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # ---------------------------------------------------------------------------
 # Sidebar — mining intensity + download placeholder
@@ -574,14 +576,13 @@ if mine_btn:
 
             st.write("🤖 Gemini analysing psychological hook patterns...")
             prompt = build_gemini_prompt(niche, search_results)
-            model = genai.GenerativeModel("gemini-1.5-flash")
-            response = model.generate_content(
-                prompt,
-                generation_config=genai.types.GenerationConfig(
+            response = gemini_client.models.generate_content(
+                model="gemini-2.5-flash-preview-04-17",
+                contents=prompt,
+                config=types.GenerateContentConfig(
                     temperature=0.75,
                     max_output_tokens=3000,
                 ),
-                request_options={"timeout": 90},
             )
             gemini_text = response.text.strip()
 
