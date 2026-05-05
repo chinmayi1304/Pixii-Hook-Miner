@@ -1,0 +1,22 @@
+kind = "web"
+previewPath = "/"
+title = "Pixii Hook Mining Engine"
+version = "1.0.0"
+id = "artifacts/pixii-hook-mining"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 3000
+
+[services.development]
+run = "streamlit run /home/runner/workspace/main.py"
+
+[services.env]
+PORT = "3000"
+BASE_PATH = "/"
