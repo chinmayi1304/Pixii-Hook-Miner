@@ -230,8 +230,11 @@ if not GEMINI_API_KEY or not TAVILY_API_KEY:
     )
     st.stop()
 
-# Initialise the new google-genai client (2026 SDK)
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+# Initialise the google-genai client using the v1beta endpoint
+gemini_client = genai.Client(
+    api_key=GEMINI_API_KEY,
+    http_options=types.HttpOptions(api_version="v1beta"),
+)
 
 # ---------------------------------------------------------------------------
 # Sidebar — mining intensity + download placeholder
@@ -588,7 +591,7 @@ if mine_btn:
             st.write("🤖 Gemini analysing psychological hook patterns...")
             prompt = build_gemini_prompt(niche, search_results)
             response = gemini_client.models.generate_content(
-                model="gemini-2.5-flash-lite-preview-06-17",
+                model="gemini-3.1-flash-lite-preview",
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0.75,
