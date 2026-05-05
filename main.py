@@ -577,7 +577,7 @@ if mine_btn:
             st.write("🤖 Gemini analysing psychological hook patterns...")
             prompt = build_gemini_prompt(niche, search_results)
             response = gemini_client.models.generate_content(
-                model="gemini-2.5-flash-preview-04-17",
+                model="gemini-3-0-flash-preview",
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0.75,
