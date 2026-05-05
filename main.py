@@ -30,7 +30,7 @@ from google.genai import types
 # Page configuration — must be the very first Streamlit call
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Pixii Hook Mining Engine",
+    page_title="Hook Mining Engine",
     page_icon="⛏️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -261,7 +261,7 @@ with st.sidebar:
     st.markdown("---")
     st.caption(f"Intensity: **{intensity}** · {num_queries} search queries")
 
-    download_slot = st.empty()   # populated with download button after mining
+    download_slot = st.empty()  # populated with download button after mining
 
 # ---------------------------------------------------------------------------
 # Header
@@ -300,6 +300,7 @@ st.markdown("---")
 # Helpers — search query generation
 # ---------------------------------------------------------------------------
 
+
 def build_search_queries(niche: str, n: int) -> list[str]:
     """Return n high-density search queries targeting viral hook signals."""
     pool = [
@@ -319,6 +320,7 @@ def build_search_queries(niche: str, n: int) -> list[str]:
 # ---------------------------------------------------------------------------
 # Helpers — Tavily batch search
 # ---------------------------------------------------------------------------
+
 
 def run_batch_search(niche: str, n: int) -> list[dict]:
     """
@@ -348,6 +350,7 @@ def run_batch_search(niche: str, n: int) -> list[dict]:
 # ---------------------------------------------------------------------------
 # Helpers — Gemini prompt construction
 # ---------------------------------------------------------------------------
+
 
 def build_gemini_prompt(niche: str, results: list[dict]) -> str:
     """Compile search snippets into a structured analysis prompt."""
@@ -411,12 +414,13 @@ def build_gemini_prompt(niche: str, results: list[dict]) -> str:
 # Helpers — parse Gemini response into named sections
 # ---------------------------------------------------------------------------
 
+
 def parse_sections(text: str) -> dict[str, str]:
     """Split Gemini output into three named sections."""
     markers = {
         "architectures": "## HOOK ARCHITECTURES",
-        "patterns":      "## VIRAL PATTERN LIBRARY",
-        "posts":         "## PIXII AI POSTS",
+        "patterns": "## VIRAL PATTERN LIBRARY",
+        "posts": "## PIXII AI POSTS",
     }
     positions: dict[str, int] = {}
     for key, marker in markers.items():
@@ -437,6 +441,7 @@ def parse_sections(text: str) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 # Helpers — UI renderers
 # ---------------------------------------------------------------------------
+
 
 def render_arch_cards(text: str) -> None:
     """Render each Hook Architecture as a styled card."""
@@ -491,9 +496,9 @@ def render_hook_cards(text: str) -> None:
 def render_post_cards(text: str) -> None:
     """Render the three platform posts as styled cards."""
     platform_cfg = [
-        ("linkedin",  "LinkedIn",   "#0a66c2", "💼"),
-        ("twitter",   "Twitter / X","#1d9bf0", "🐦"),
-        ("instagram", "Instagram",  "#e1306c", "📸"),
+        ("linkedin", "LinkedIn", "#0a66c2", "💼"),
+        ("twitter", "Twitter / X", "#1d9bf0", "🐦"),
+        ("instagram", "Instagram", "#e1306c", "📸"),
     ]
 
     lower = text.lower()
@@ -517,10 +522,12 @@ def render_post_cards(text: str) -> None:
         # Strip the platform header line(s)
         seg_lines = segment.split("\n")
         body_lines = [
-            l for l in seg_lines
+            l
+            for l in seg_lines
             if not re.search(
                 r"^(linkedin|twitter|instagram|##\s*(linkedin|twitter|instagram))",
-                l.strip(), re.IGNORECASE
+                l.strip(),
+                re.IGNORECASE,
             )
         ]
         body = "<br>".join(l for l in body_lines if l.strip())
@@ -554,11 +561,15 @@ if mine_btn:
 
     try:
         # ── Live crawl animation ─────────────────────────────────────────
-        with st.status("🔍 Initialising Hook Mining Engine...", expanded=True) as status:
+        with st.status(
+            "🔍 Initialising Hook Mining Engine...", expanded=True
+        ) as status:
             st.write("🌐 Connecting to high-density signal nodes...")
             time.sleep(0.3)
 
-            st.write(f"🔎 Querying **{num_queries}** viral signal sources for **{niche}**...")
+            st.write(
+                f"🔎 Querying **{num_queries}** viral signal sources for **{niche}**..."
+            )
             search_results = run_batch_search(niche, num_queries)
 
             if not search_results:
@@ -577,7 +588,7 @@ if mine_btn:
             st.write("🤖 Gemini analysing psychological hook patterns...")
             prompt = build_gemini_prompt(niche, search_results)
             response = gemini_client.models.generate_content(
-                model="gemini-3-0-flash-preview",
+                model="gemini-2.5-flash-lite-preview-06-17",
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0.75,
@@ -592,7 +603,9 @@ if mine_btn:
             time.sleep(0.15)
 
             sections = parse_sections(gemini_text)
-            status.update(label="✅ Mining complete — hook data ready.", state="complete")
+            status.update(
+                label="✅ Mining complete — hook data ready.", state="complete"
+            )
 
         # ── Metric row ───────────────────────────────────────────────────
         st.markdown(
@@ -673,7 +686,9 @@ if mine_btn:
         # ── Download button (sidebar) ────────────────────────────────────
         full_report = "\n".join(report_parts)
         safe_niche = niche.replace(" ", "_").lower()
-        filename = f"pixii_hooks_{safe_niche}_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+        filename = (
+            f"pixii_hooks_{safe_niche}_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+        )
 
         download_slot.download_button(
             label="⬇️ Download Report",
@@ -720,12 +735,24 @@ else:
 
     c1, c2, c3 = st.columns(3)
     for col, icon, title, desc in [
-        (c1, "🌐", "Batch Web Crawl",
-         "Multi-query Tavily search across viral roundups, newsletters & case studies"),
-        (c2, "🧠", "Hook Architecture",
-         "Gemini AI extracts the psychological WHY behind trending content"),
-        (c3, "✍️", "Pixii AI Posts",
-         "3 platform-ready posts crafted from real viral patterns"),
+        (
+            c1,
+            "🌐",
+            "Batch Web Crawl",
+            "Multi-query Tavily search across viral roundups, newsletters & case studies",
+        ),
+        (
+            c2,
+            "🧠",
+            "Hook Architecture",
+            "Gemini AI extracts the psychological WHY behind trending content",
+        ),
+        (
+            c3,
+            "✍️",
+            "Pixii AI Posts",
+            "3 platform-ready posts crafted from real viral patterns",
+        ),
     ]:
         with col:
             st.markdown(
